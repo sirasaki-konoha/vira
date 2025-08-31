@@ -74,4 +74,6 @@ Requires [Rust](https://www.rust-lang.org/tools/install).
 cargo build --release
 ```
 
-##
+## License
+BSD 3-Clause License
+Please read [LICENSE](./LICENSE) file.
