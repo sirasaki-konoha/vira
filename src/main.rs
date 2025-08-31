@@ -6,6 +6,7 @@ mod macros;
 mod write;
 mod stdin;
 mod size;
+mod rm;
 
 /// Visual Fire Read System vira
 #[derive(Parser)]
@@ -15,16 +16,22 @@ struct Cli {
     #[arg(short, long)]
     pub line: bool,
 
-    /// Write the following string to a file
+    /// Writes the following content to a specified file
     #[arg(short, long, value_names = &["OPTION", "CONTENT"], num_args(1..))]
     pub write: Option<Vec<String>>,
     
+    // Display specific file size
     #[arg(short, long)]
     pub size: bool,
 
+    /// Remove a specified file
     #[arg(short, long)]
     pub remove: bool,
+    /// Check before removing a file
+    #[arg(short, long)]
+    pub check: bool,
 
+    /// Creates a specified file
     #[arg(short, long)]
     pub new: bool,
 }
@@ -44,9 +51,17 @@ fn main() {
             err!("Failed to open {}: {}", file_name, e);
             exit(1);
         });
-    } else if cmd.size {
+    }
+
+    if cmd.size {
         flag = true;
         size::get_size(&file_name);
+    }
+    
+    if cmd.remove {
+        flag = true;
+        rm::remove_file(&file_name, cmd.check);
+        return;
     }
     
     if let Some(write_cmd) = cmd.write {
