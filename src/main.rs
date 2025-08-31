@@ -1,6 +1,7 @@
 #![allow(unused_assignments)]
-use std::process::exit;
+use std::{env, process::{self, exit}};
 use clap::Parser;
+use crossterm::style::Stylize;
 mod raw;
 mod macros;
 mod write;
@@ -9,10 +10,16 @@ mod size;
 mod rm;
 mod new;
 
+const VIRA_VERSION: &'static str = "1.0";
+
 /// Visual Fire Read System vira
 #[derive(Parser)]
 struct Cli {
     pub file: Option<String>,
+
+    /// Display vira's version
+    #[arg(short, long)]
+    pub version: bool,
 
     /// Display file content line by line
     #[arg(short, long)]
@@ -44,8 +51,15 @@ struct Cli {
 }
 
 fn main() {
+    let bind = env::args().collect::<Vec<String>>();
+    let exe_name = bind.first().unwrap();
+
     let cmd = Cli::parse();
     let mut flag = false;
+
+    if cmd.version {
+        version(&exe_name);
+    }
     
     let Some(file_name) = cmd.file else {
         stdin::get_stdin_loop();
@@ -99,6 +113,16 @@ fn main() {
     });
 }
 
+
+fn version(exe_name: &str) {
+    println!("{} {} v{}", ">>>".cyan().bold(), exe_name, VIRA_VERSION);
+    println!(
+        "{} {} is licensed under BSD 3-Clause License.", 
+        ">>>".cyan().bold(), 
+        exe_name
+    );
+    exit(0);
+}
 
 
 
