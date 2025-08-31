@@ -8,6 +8,11 @@ use crossterm::style::Stylize;
 
 pub fn remove_file<P: AsRef<Path>>(path: P, check: bool) {
     let path = path.as_ref();
+    
+    if !path.exists() {
+        err!("{}: No such file or directory", path.display());
+        return;
+    }
 
     if path.is_dir() {
         let p = inquire::Confirm::new(&format!(

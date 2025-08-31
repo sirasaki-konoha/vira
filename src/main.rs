@@ -7,12 +7,14 @@ mod write;
 mod stdin;
 mod size;
 mod rm;
+mod new;
 
 /// Visual Fire Read System vira
 #[derive(Parser)]
 struct Cli {
     pub file: Option<String>,
 
+    /// Display file content line by line
     #[arg(short, long)]
     pub line: bool,
 
@@ -20,20 +22,25 @@ struct Cli {
     #[arg(short, long, value_names = &["OPTION", "CONTENT"], num_args(1..))]
     pub write: Option<Vec<String>>,
     
-    // Display specific file size
+    /// Display specific file size
     #[arg(short, long)]
     pub size: bool,
 
     /// Remove a specified file
     #[arg(short, long)]
     pub remove: bool,
-    /// Check before removing a file
+
+    /// Check before removing a file or directory or creates new file or directory
     #[arg(short, long)]
     pub check: bool,
 
     /// Creates a specified file
     #[arg(short, long)]
     pub new: bool,
+    
+    /// Creates a specified directory
+    #[arg(short, long)]
+    pub directory: bool,
 }
 
 fn main() {
@@ -61,6 +68,18 @@ fn main() {
     if cmd.remove {
         flag = true;
         rm::remove_file(&file_name, cmd.check);
+        return;
+    }
+    
+    if cmd.new {
+        flag = true;
+        new::create_file(&file_name, cmd.check);
+        return;
+    }
+    
+    if cmd.directory {
+        flag = true;
+        new::create_directory(&file_name, cmd.check);
         return;
     }
     
